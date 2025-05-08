@@ -1,0 +1,62 @@
+package za.co.wethinkcode.toyrobot;
+
+public abstract class Command {
+    private final String name;
+    private String argument;
+
+    public abstract boolean execute(Robot target);
+
+    public Command(String name){
+        this.name = name.trim().toLowerCase();
+        this.argument = "";
+    }
+
+    public Command(String name, String argument) {
+        this(name);
+        this.argument = argument.trim();
+    }
+
+    public String getName() {                                                                           //<2>
+        return name;
+    }
+
+    public String getArgument() {
+        return this.argument;
+    }
+
+    public static Command create(String instruction) {
+        String[] args = instruction.toLowerCase().trim().split(" ");
+        switch (args[0]){
+            case "mazerun":
+                return new MazeRunCommand(args[1]);
+            case "shutdown":
+                return new ShutdownCommand();
+            case "replay":
+                if (args.length == 2){
+                    return new ReplayCommand(args[1]);
+                } else if (args.length >= 3) {
+//                    System.out.println(args[1] + " " + args[2]);
+                    return new ReplayCommand(args[1] + " " + args[2]);
+                }
+                return new ReplayCommand();
+
+            case "left":
+                return new LeftCommand();
+            case "right":
+                return new RightCommand();
+            case "back":
+                return new BackCommand(args[1]);
+            case "sprint":
+                return new SprintCommand(args[1]);
+            case "off":
+                return new ShutdownCommand();
+            case "help":
+                return new HelpCommand();
+            case "forward":
+                return new ForwardCommand(args[1]);
+            default:
+                throw new IllegalArgumentException("Unsupported command: " + instruction);
+        }
+    }
+}
+
